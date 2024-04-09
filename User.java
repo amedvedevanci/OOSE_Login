@@ -54,6 +54,24 @@ public class User {
     */
     
     public String createAccount(String email, String password, int userType){
+       
+        /*comparePassword local variable to allow user to re-enter password
+        If the passwords match, createAccount method will continue as expected.
+        If they do not match, registrationMessage is returned to reflect this
+        */
+        String comparePassword = JOptionPane.showInputDialog("Please re-enter your password");
+            if(comparePassword.length() == 0){
+                registrationMessage = "Input cannot be blank. Please enter a value";
+                return registrationMessage;
+            }
+            else if(comparePassword.equals(password)){
+                //pass
+            }
+            else{
+                registrationMessage = "Password entries do not match. Please re-enter your password";
+                return registrationMessage;
+            }
+    
        HashMap<String,String> users= getUsersHashMap();
 
        username = userType+email;
@@ -68,8 +86,6 @@ public class User {
                 System.out.print("key: "+ mentry.getKey() + " & Value: ");
                 System.out.println(mentry.getValue());
             }
-        
-        
         
         //check if email already exists in the system
         if(users.containsKey(username)){
