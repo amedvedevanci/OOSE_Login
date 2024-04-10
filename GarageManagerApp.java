@@ -15,6 +15,8 @@ public class GarageManagerApp {
         String registrationMessage;
         String authenticationMessage;
 
+        int menuSelect;
+
         //instantiate User class
 
         User user = new User();
@@ -38,5 +40,17 @@ public class GarageManagerApp {
         }
 
         //menuSelect to follow later
+
+        String [] menuOptions = {"Create Employee Account"};
+        menuSelect = JOptionPane.showOptionDialog(null, "Please sekect a menu option", "Menu", 0, 1, null, menuOptions, menuOptions[0]);
+    
+        if(menuSelect == 0){
+            String [] userTypes = {"Customer","Secretary","Mechanic","Garage Manager"};
+            userType = JOptionPane.showOptionDialog(null, "Please select the type of account you wish to register", "Select account type", 0, 3, null, userTypes, userTypes[0]);
+            email = JOptionPane.showInputDialog("Enter email address");
+            password = JOptionPane.showInputDialog("Enter password");
+            registrationMessage = user.createAccount(email, password, userType);
+            System.out.println(registrationMessage);
+        }
     }
 }
