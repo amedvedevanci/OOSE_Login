@@ -29,6 +29,28 @@ public class CustomerApp {
         }
         else if(signUpLoginSelect==1){
             authenticationMessage = user.login(email,password,userType);
+            while(!(authenticationMessage.equals("Login successful"))){
+                String [] loginOptions = {"Try again","Register","Reset password"};
+                int loginFailSelect = JOptionPane.showOptionDialog(null, "Login failed. Try again?", "Try again?", 0, 1, null, loginOptions, loginOptions[0]);
+                
+                if(loginFailSelect == 0){
+                    email = JOptionPane.showInputDialog("Enter your email address");
+                    password = JOptionPane.showInputDialog("Enter your password");
+                    authenticationMessage = user.login(email, password, userType);
+                }
+                else if(loginFailSelect == 1){
+                    email = JOptionPane.showInputDialog("Enter your email address");
+                    password = JOptionPane.showInputDialog("Enter your password");
+                    registrationMessage = user.createAccount(email, password, userType);
+                }
+                else if(loginFailSelect == 2){
+                    //reset password
+                }
+                else{
+                    System.exit(0);
+                }
+                
+            }
             System.out.println(authenticationMessage);
         }
         else{
