@@ -17,6 +17,9 @@ public class User {
     private String registrationMessage;
     private String authenticationMessage;
 
+    boolean registrationSuccessful;
+    boolean loginSuccessful;
+
     //make name more meaningful, but apart from that keep filepath separate to allow it to be modified in future
     String filePath = "users.ser";
 
@@ -52,15 +55,24 @@ public class User {
 
     The method then returns String registrationMessage
     */
+    public void setEmail(String email){
+        this.email=email;
+    }
+
+    public void setPassword(String password){
+        this.password=password;
+    }
     
-    public String createAccount(String email, String password, int userType){
-       
+    public String createAccount(int userType){
         /*comparePassword local variable to allow user to re-enter password
         If the passwords match, createAccount method will continue as expected.
         If they do not match, registrationMessage is returned to reflect this
         */
         String comparePassword = JOptionPane.showInputDialog("Please re-enter your password");
-            if(comparePassword.length() == 0){
+            if(comparePassword==null){
+                registrationMessage = "Cancelled";
+            }
+            else if(comparePassword.length() == 0){
                 registrationMessage = "Input cannot be blank. Please enter a value";
                 return registrationMessage;
             }
@@ -90,11 +102,15 @@ public class User {
         //check if email already exists in the system
         if(users.containsKey(username)){
             registrationMessage = "Account already exists";
+            registrationSuccessful=false;
+            setRegistrationSuccessCheck(registrationSuccessful);
         }
 
         //check if a String value exists for email and password. If either is null, requests to enter values for email and password
         else if(email.length() == 0 || password.length() == 0){
             registrationMessage = "Please enter values for email and password";
+            registrationSuccessful=false;
+            setRegistrationSuccessCheck(registrationSuccessful);
         }
 
         //otherwise register user and update the serialised Hashmap
@@ -102,6 +118,8 @@ public class User {
         else{
             users.put(username,password);
             registrationMessage = "Registration successful";
+            registrationSuccessful=true;
+            setRegistrationSuccessCheck(registrationSuccessful);
             try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(filePath))) {
                 outputStream.writeObject(users);
                 System.out.println("HashMap updated and saved successfully!");
@@ -136,7 +154,7 @@ public class User {
 
     The method then returns String authenticationMessage.
     */
-    public String login(String email, String password, int userType){
+    public String login(int userType){
         HashMap<String,String> users= getUsersHashMap();
         
         //print HashMap for testing purposes Only. Remove this block of code
@@ -154,28 +172,52 @@ public class User {
         //if length is 0 ie String is empty, update authenticationMessage
         if(email.length() == 0 || password.length() == 0){
             authenticationMessage = "Please enter your credentials";
+            loginSuccessful=false;
+            setLoginSuccessCheck(loginSuccessful);
         }
 
         //if username is not found in the HashMap, but is found when the email is concatenated with a different int, ask user to login from correct app
         else if(!users.containsKey(username) && (users.containsKey(0+email) || users.containsKey((1+email)) || users.containsKey((2+email)) || users.containsKey((3+email)))){
             authenticationMessage = "Please use correct app to login";
+            loginSuccessful=false;
+            setLoginSuccessCheck(loginSuccessful);
         }
 
         //if username is not found at all, update authenticationMessage
         else if(!users.containsKey(username)){
             authenticationMessage = "No account found";
+            loginSuccessful=false;
+            setLoginSuccessCheck(loginSuccessful);
         }
 
         //return invalid password if email exists but does not match the password in the system
         else if(!users.get(username).equals(password)){
            authenticationMessage = "Invalid password";
+           loginSuccessful=false;
+           setLoginSuccessCheck(loginSuccessful);
         }
 
         //login user after validating correct email and password
         else{
             authenticationMessage = "Login successful";
+            loginSuccessful=true;
+            setLoginSuccessCheck(loginSuccessful);
         }
 
         return authenticationMessage;
+    }
+
+    public void setRegistrationSuccessCheck(boolean registrationSuccessful){
+        this.registrationSuccessful = registrationSuccessful;
+    }
+    public boolean getRegistrationSuccessCheck(){
+        return registrationSuccessful;
+    }
+
+    public void setLoginSuccessCheck(boolean loginSuccessful){
+        this.loginSuccessful = loginSuccessful;
+    }
+    public boolean getLoginSuccessCheck(){
+        return loginSuccessful;
     }
 }

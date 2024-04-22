@@ -1,3 +1,4 @@
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public class GarageManagerApp {
@@ -8,49 +9,84 @@ public class GarageManagerApp {
 
         //vars
         int signUpLoginSelect;
-        String email;
-        String password;
+        String email="";
+        String password="";
         int userType = 3;
 
         String registrationMessage;
         String authenticationMessage;
 
-        int menuSelect;
+        boolean operationCancelled = false;
+        boolean registrationSuccessful=false;
+        boolean loginSuccessful=false;
 
+        //full menu to follow later
+        int menuSelect;
+        String [] menuOptions = {"Create Employee Account"};
+
+        //declare objects
+        JFrame frame =new JFrame();
         //instantiate User class
 
         User user = new User();
 
         String [] signUpLoginOptions = {"Register","Login"};
-        signUpLoginSelect = JOptionPane.showOptionDialog(null,"Please select","Register or Login",0,2,null,signUpLoginOptions,signUpLoginOptions[0]);
-        email = JOptionPane.showInputDialog("Enter your email address");
-        password = JOptionPane.showInputDialog("Enter your password");
-
-        if(signUpLoginSelect==0){
-            registrationMessage = user.createAccount(email,password,userType);
-            System.out.println(registrationMessage);
-        }
-        else if(signUpLoginSelect==1){
-            authenticationMessage = user.login(email,password,userType);
+        signUpLoginSelect = JOptionPane.showOptionDialog(frame,"Please select","Register or Login",0,2,null,signUpLoginOptions,signUpLoginOptions[0]);
+        
+        
+        //first check: set operationCancelled boolean to true if window is closed
+        if(signUpLoginSelect==JOptionPane.CLOSED_OPTION){
+            authenticationMessage="Cancelled";
             System.out.println(authenticationMessage);
+            operationCancelled = true;
         }
         else{
-            authenticationMessage = "Operation cancelled";
-            System.out.println(authenticationMessage);
+            //second check: set operationCancelled boolean to true if email is not entered
+            email = JOptionPane.showInputDialog("Enter your email address");
+            if(email == null){
+                authenticationMessage = "Cancelled";
+                System.out.println(authenticationMessage);
+                operationCancelled = true;
+            }
+            else{
+                user.setEmail(email);
+                //third check: set operationCancelled boolean to true if password is not entered
+                password = JOptionPane.showInputDialog("Enter your password");
+                if(password == null){
+                    authenticationMessage = "Cancelled";
+                    System.out.println(authenticationMessage);
+                    operationCancelled = true;
+                }
+                //after these checks are passed, register or login user
+                else{
+                    user.setPassword(password);
+                    if(signUpLoginSelect==0){
+                        registrationMessage = user.createAccount(userType);
+                        System.out.println(registrationMessage);
+                    }
+                    else if(signUpLoginSelect==1){
+                        authenticationMessage = user.login(userType);
+                        System.out.println(authenticationMessage);
+                    }
+                }
+            }
         }
 
+        
+        
         //menuSelect to follow later
-
-        String [] menuOptions = {"Create Employee Account"};
-        menuSelect = JOptionPane.showOptionDialog(null, "Please sekect a menu option", "Menu", 0, 1, null, menuOptions, menuOptions[0]);
+        loginSuccessful=user.getLoginSuccessCheck();
+        if(loginSuccessful){
+            menuSelect = JOptionPane.showOptionDialog(null, "Please select a menu option", "Menu", 0, 1, null, menuOptions, menuOptions[0]);
     
-        if(menuSelect == 0){
-            String [] userTypes = {"Customer","Secretary","Mechanic","Garage Manager"};
-            userType = JOptionPane.showOptionDialog(null, "Please select the type of account you wish to register", "Select account type", 0, 3, null, userTypes, userTypes[0]);
-            email = JOptionPane.showInputDialog("Enter email address");
-            password = JOptionPane.showInputDialog("Enter password");
-            registrationMessage = user.createAccount(email, password, userType);
-            System.out.println(registrationMessage);
+            if(menuSelect == 0){
+                String [] userTypes = {"Customer","Secretary","Mechanic","Garage Manager"};
+                userType = JOptionPane.showOptionDialog(null, "Please select the type of account you wish to register", "Select account type", 0, 3, null, userTypes, userTypes[0]);
+                email = JOptionPane.showInputDialog("Enter email address");
+                password = JOptionPane.showInputDialog("Enter password");
+                registrationMessage = user.createAccount(userType);
+                System.out.println(registrationMessage);
+            }
         }
-    }
+    }       
 }
