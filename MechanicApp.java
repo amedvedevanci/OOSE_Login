@@ -1,5 +1,6 @@
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 
 public class MechanicApp {
 
@@ -50,14 +51,15 @@ public class MechanicApp {
             else{
                 user.setEmail(email);
                 //third check: set operationCancelled boolean to true if password is not entered
-                password = JOptionPane.showInputDialog("Enter your password");
-                if(password == null){
+                JPasswordField passwordField = new JPasswordField();
+                int passwordEntry = JOptionPane.showConfirmDialog(null, passwordField, "Enter your password",JOptionPane.OK_CANCEL_OPTION);
+                if(passwordEntry<0||passwordEntry==JOptionPane.CANCEL_OPTION){
                     authenticationMessage = "Cancelled";
                     System.out.println(authenticationMessage);
                     operationCancelled = true;
                 }
-                //after these checks are passed, register or login user
                 else{
+                    password = new String(passwordField.getPassword());
                     user.setPassword(password);
                     if(signUpLoginSelect==0){
                         registrationMessage = user.createAccount(userType);
