@@ -71,7 +71,7 @@ public class User {
         If they do not match, registrationMessage is returned to reflect this
         */
         JPasswordField confirmPasswordField = new JPasswordField();
-        int confirmPasswordEntry = JOptionPane.showConfirmDialog(null, confirmPasswordField, "Please re-enter your password",JOptionPane.OK_CANCEL_OPTION);
+        int confirmPasswordEntry = JOptionPane.showConfirmDialog(null, confirmPasswordField, "Please re-enter password",JOptionPane.OK_CANCEL_OPTION);
             if(confirmPasswordEntry<0||confirmPasswordEntry==JOptionPane.CANCEL_OPTION){
                     registrationMessage = "Cancelled";
                     registrationSuccessful = false;
