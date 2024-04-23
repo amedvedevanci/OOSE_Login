@@ -1,4 +1,6 @@
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+
 import java.util.HashMap;
 import java.io.*;
 
@@ -68,20 +70,28 @@ public class User {
         If the passwords match, createAccount method will continue as expected.
         If they do not match, registrationMessage is returned to reflect this
         */
-        String comparePassword = JOptionPane.showInputDialog("Please re-enter your password");
-            if(comparePassword==null){
-                registrationMessage = "Cancelled";
-            }
-            else if(comparePassword.length() == 0){
-                registrationMessage = "Input cannot be blank. Please enter a value";
-                return registrationMessage;
-            }
-            else if(comparePassword.equals(password)){
-                //pass
+        JPasswordField confirmPasswordField = new JPasswordField();
+        int confirmPasswordEntry = JOptionPane.showConfirmDialog(null, confirmPasswordField, "Please re-enter your password",JOptionPane.OK_CANCEL_OPTION);
+            if(confirmPasswordEntry<0||confirmPasswordEntry==JOptionPane.CANCEL_OPTION){
+                    registrationMessage = "Cancelled";
+                    registrationSuccessful = false;
+                    setRegistrationSuccessCheck(registrationSuccessful);    
             }
             else{
-                registrationMessage = "Password entries do not match. Please re-enter your password";
-                return registrationMessage;
+                String confirmPassword = new String(confirmPasswordField.getPassword());
+                if(confirmPassword.length() == 0){
+                    registrationMessage = "Input cannot be blank. Please enter a value";
+                    registrationSuccessful = false;
+                    setRegistrationSuccessCheck(registrationSuccessful);
+                }
+                else if(confirmPassword.equals(password)){
+                    //pass
+                }
+                else{
+                    registrationMessage = "Password entries do not match. Please re-enter your password";
+                    registrationSuccessful = false;
+                    setRegistrationSuccessCheck(registrationSuccessful);
+                }
             }
     
        HashMap<String,String> users= getUsersHashMap();
