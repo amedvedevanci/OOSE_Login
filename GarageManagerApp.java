@@ -23,7 +23,7 @@ public class GarageManagerApp {
 
         //full menu to follow later
         int menuSelect;
-        String [] menuOptions = {"Create Employee Account"};
+        String [] menuOptions = {"Exit","Create Employee Account"};
 
         //declare objects
         JFrame frame =new JFrame();
@@ -54,7 +54,7 @@ public class GarageManagerApp {
                 //third check: set operationCancelled boolean to true if password is not entered
                 JPasswordField passwordField = new JPasswordField();
                 int passwordEntry = JOptionPane.showConfirmDialog(null, passwordField, "Enter your password",JOptionPane.OK_CANCEL_OPTION);
-                if(passwordEntry<0||passwordEntry==JOptionPane.CANCEL_OPTION){
+                if((passwordEntry==JOptionPane.CANCEL_OPTION)||(passwordEntry==JOptionPane.CANCEL_OPTION)){
                     authenticationMessage = "Cancelled";
                     System.out.println(authenticationMessage);
                     operationCancelled = true;
@@ -79,16 +79,42 @@ public class GarageManagerApp {
         //menuSelect to follow later
         loginSuccessful=user.getLoginSuccessCheck();
         if(loginSuccessful){
-            menuSelect = JOptionPane.showOptionDialog(null, "Please select a menu option", "Menu", 0, 1, null, menuOptions, menuOptions[0]);
-    
-            if(menuSelect == 0){
-                String [] userTypes = {"Customer","Secretary","Mechanic","Garage Manager"};
-                userType = JOptionPane.showOptionDialog(null, "Please select the type of account you wish to register", "Select account type", 0, 3, null, userTypes, userTypes[0]);
-                email = JOptionPane.showInputDialog("Enter email address");
-                password = JOptionPane.showInputDialog("Enter password");
-                registrationMessage = user.createAccount(userType);
-                System.out.println(registrationMessage);
-            }
+            do{
+                menuSelect = JOptionPane.showOptionDialog(null, "Please select a menu option", "Menu", 0, 1, null, menuOptions, menuOptions[0]);
+                if((menuSelect==0)||(menuSelect==JOptionPane.CLOSED_OPTION)){
+                    System.out.println("Cancelled");
+                }
+                else if(menuSelect == 1){
+                    String [] userTypes = {"Customer","Secretary","Mechanic","Garage Manager"};
+                    userType = JOptionPane.showOptionDialog(null, "Please select the type of account you wish to register", "Select account type", 0, 3, null, userTypes, userTypes[0]);
+                    if(userType==JOptionPane.CLOSED_OPTION){
+                        registrationMessage="Cancelled";
+                        System.out.println(registrationMessage);
+                    }
+                    else{
+                        email = JOptionPane.showInputDialog("Enter email address");
+                        if(email==null){
+                            registrationMessage="Cancelled";
+                            System.out.println(registrationMessage);
+                        }
+                        else{
+                            user.setEmail(email);
+                            JPasswordField passwordField = new JPasswordField();
+                            int passwordEntry = JOptionPane.showConfirmDialog(null, passwordField, "Enter your password",JOptionPane.OK_CANCEL_OPTION);
+                            if(passwordEntry==JOptionPane.CLOSED_OPTION||passwordEntry==JOptionPane.CANCEL_OPTION){
+                                registrationMessage = "Cancelled";
+                                System.out.println(registrationMessage);
+                            }
+                            else{
+                                password = new String(passwordField.getPassword());
+                                user.setPassword(password);
+                                registrationMessage = user.createAccount(userType);
+                                System.out.println(registrationMessage);
+                            }
+                        }
+                    }
+                }
+            }while(menuSelect>0);
         }
-    }       
+    }     
 }
