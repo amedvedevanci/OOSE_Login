@@ -23,7 +23,7 @@ public class SecretaryApp {
 
         //full menu to follow later
         int menuSelect;
-        String [] menuOptions = {"Create Customer Account"};
+        String [] menuOptions = {"Exit","Create Customer Account"};
 
         //declare objects
         JFrame frame =new JFrame();
@@ -79,15 +79,35 @@ public class SecretaryApp {
         //menuSelect to follow later
         loginSuccessful=user.getLoginSuccessCheck();
         if(loginSuccessful){
-            menuSelect = JOptionPane.showOptionDialog(null, "Please select a menu option", "Menu", 0, 1, null, menuOptions, menuOptions[0]);
-    
-            if(menuSelect == 0){
-                userType = 0;
-                email = JOptionPane.showInputDialog("Enter email address");
-                password = JOptionPane.showInputDialog("Enter password");
-                registrationMessage = user.createAccount(userType);
-                System.out.println(registrationMessage);
-            }
+            do{
+                menuSelect = JOptionPane.showOptionDialog(null, "Please select a menu option", "Menu", 0, 1, null, menuOptions, menuOptions[0]);
+                if((menuSelect==0)||(menuSelect==JOptionPane.CLOSED_OPTION)){
+                    System.out.println("Cancelled");
+                }
+                else if(menuSelect == 1){
+                    userType = 0;
+                    email = JOptionPane.showInputDialog("Enter email address");
+                    if(email==null){
+                        registrationMessage="Cancelled";
+                        System.out.println(registrationMessage);
+                    }
+                    else{
+                        user.setEmail(email);
+                        JPasswordField passwordField = new JPasswordField();
+                        int passwordEntry = JOptionPane.showConfirmDialog(null, passwordField, "Enter your password",JOptionPane.OK_CANCEL_OPTION);
+                        if(passwordEntry==JOptionPane.CLOSED_OPTION||passwordEntry==JOptionPane.CANCEL_OPTION){
+                            registrationMessage = "Cancelled";
+                            System.out.println(registrationMessage);
+                        }
+                        else{
+                            password = new String(passwordField.getPassword());
+                            user.setPassword(password);
+                            registrationMessage = user.createAccount(userType);
+                            System.out.println(registrationMessage);
+                        }
+                    }
+                }
+            }while(menuSelect>0);
         }
-    }       
+    }
 }
