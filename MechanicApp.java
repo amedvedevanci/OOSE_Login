@@ -53,19 +53,38 @@ public class MechanicApp {
                     //third check: set operationCancelled boolean to true if password is not entered
                     JPasswordField passwordField = new JPasswordField();
                     int passwordEntry = JOptionPane.showConfirmDialog(null, passwordField, "Enter your password",JOptionPane.OK_CANCEL_OPTION);
-                    if(passwordEntry<0||passwordEntry==JOptionPane.CANCEL_OPTION){
+                    if((passwordEntry==JOptionPane.CANCEL_OPTION)||(passwordEntry==JOptionPane.CANCEL_OPTION)){
                         authenticationMessage = "Cancelled";
                         System.out.println(authenticationMessage);
                         operationCancelled = true;
                     }
                     else{
-                        password = new String(passwordField.getPassword());
-                        user.setPassword(password);
                         if(signUpLoginSelect==0){
-                            registrationMessage = user.createAccount(userType);
-                            System.out.println(registrationMessage);
+                            JPasswordField confirmPasswordField = new JPasswordField();
+                            int confirmPasswordEntry = JOptionPane.showConfirmDialog(null, confirmPasswordField, "Please re-enter password",JOptionPane.OK_CANCEL_OPTION);
+                            
+                            if(confirmPasswordEntry<0||confirmPasswordEntry==JOptionPane.CANCEL_OPTION){
+                                registrationMessage = "Cancelled";
+                                operationCancelled = true;
+                            }
+                            else{
+                                boolean confirmPasswordCheck = Arrays.equals(passwordField.getPassword(), confirmPasswordField.getPassword());
+                                if(confirmPasswordCheck){
+                                    password = new String(passwordField.getPassword());
+                                    user.setPassword(password);
+                                    registrationMessage = user.createAccount(userType);
+                                    System.out.println(registrationMessage);
+                                }
+                                else{
+                                    registrationMessage="Passwords do not match";
+                                    System.out.println(registrationMessage);
+                                    user.setRegistrationSuccessCheck(false);
+                                }
+                            }
                         }
                         else if(signUpLoginSelect==1){
+                            password = new String(passwordField.getPassword());
+                            user.setPassword(password);
                             authenticationMessage = user.login(userType);
                             System.out.println(authenticationMessage);
                         }
