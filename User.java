@@ -65,35 +65,7 @@ public class User {
         this.password=password;
     }
     
-    public String createAccount(int userType){
-        /*comparePassword local variable to allow user to re-enter password
-        If the passwords match, createAccount method will continue as expected.
-        If they do not match, registrationMessage is returned to reflect this
-        */
-        JPasswordField confirmPasswordField = new JPasswordField();
-        int confirmPasswordEntry = JOptionPane.showConfirmDialog(null, confirmPasswordField, "Please re-enter password",JOptionPane.OK_CANCEL_OPTION);
-            if(confirmPasswordEntry<0||confirmPasswordEntry==JOptionPane.CANCEL_OPTION){
-                    registrationMessage = "Cancelled";
-                    registrationSuccessful = false;
-                    setRegistrationSuccessCheck(registrationSuccessful);    
-            }
-            else{
-                String confirmPassword = new String(confirmPasswordField.getPassword());
-                if(confirmPassword.length() == 0){
-                    registrationMessage = "Input cannot be blank. Please enter a value";
-                    registrationSuccessful = false;
-                    setRegistrationSuccessCheck(registrationSuccessful);
-                }
-                else if(confirmPassword.equals(password)){
-                    //pass
-                }
-                else{
-                    registrationMessage = "Password entries do not match. Please re-enter your password";
-                    registrationSuccessful = false;
-                    setRegistrationSuccessCheck(registrationSuccessful);
-                }
-            }
-    
+    public String createAccount(int userType){    
        HashMap<String,String> users= getUsersHashMap();
 
        username = userType+email;
