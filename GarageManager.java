@@ -3,19 +3,36 @@ import javax.swing.JPasswordField;
 
 public class GarageManager extends User{
     private int menuSelect;
+    private String [] menuOptions = {"Exit","Create Employee Account"};
 
+    //constructor
     public GarageManager(){
         userType=3;
     }
 
+    //return userType
     public int getUserType(){
         return userType;
     }
 
+    //return menuOptions for this user type
+    public String[] getMenuOptions(){
+        return menuOptions;
+    }
+
+    //set menuSelect
     public void setMenuSelect(int menuSelect){
         this.menuSelect = menuSelect;
     }
 
+    //menu function
+    /*TODO: a lot of this still needs abstracted properly, methods need to be updated and in general 
+    separated as for example create account interface is just repeated from previous instance.
+    Need to add the additional handlers added previously, namely patterns, matchers, 
+    alternatively separate those into their own classes which makes a lot more sense.
+    
+    Full menu to follow later. 
+    */
     public void runMenu(){
         do{
             if((menuSelect==0)||(menuSelect==JOptionPane.CANCEL_OPTION)){

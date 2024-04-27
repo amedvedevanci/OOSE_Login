@@ -1,4 +1,3 @@
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.regex.*;
 
@@ -17,14 +16,15 @@ public class MechanicBookingApp {
 
         String registrationMessage;
         String authenticationMessage;
+        String resetPasswordMessage;
 
         boolean operationCancelled = false;
         boolean registrationSuccessful=false;
         boolean loginSuccessful=false;
+        boolean resetPasswordSuccessful;
 
         //full menu to follow later
         int menuSelect;
-        String [] menuOptions = {"Exit","Create Employee Account"};
 
         //declare objects
         JFrame frame =new JFrame();
@@ -40,7 +40,9 @@ public class MechanicBookingApp {
         //instantiate User class
         User user = new User();
 
+        //the loop around the application will run unless operation is cancelled or login is successful
         do{
+            //userRole selection screen
             String [] userTypes = {"Customer","Secretary","Mechanic","Garage Manager"};
             try{
             userRole = JOptionPane.showInputDialog(frame,"Please select your role","Welcome",JOptionPane.QUESTION_MESSAGE,null,userTypes,"Customer").toString();
@@ -49,6 +51,7 @@ public class MechanicBookingApp {
                 System.exit(0);
             }
 
+            //define userType based on userRole selection
             switch (userRole) {
                 case "Customer":
                     Customer customer = new Customer();
@@ -71,15 +74,15 @@ public class MechanicBookingApp {
                     //break;
             }
             
+            //sign up or login selection screen
             String [] signUpLoginOptions = {"Register","Login"};
             signUpLoginSelect = JOptionPane.showOptionDialog(frame,"Please select",userRole,0,2,null,signUpLoginOptions,signUpLoginOptions[0]);
-            //first check: set operationCancelled boolean to true if window is closed
+            //set operationCancelled boolean to true if window is closed
             if(signUpLoginSelect==JOptionPane.CLOSED_OPTION){
                 operationCancelled = true;
             }
             else{
-                //second check: set operationCancelled boolean to true if email is not entered
-                //addresses user clicks close here
+                //set operationCancelled boolean to true if email is not entered
                 email = JOptionPane.showInputDialog("Enter your email address");
                 if(email==null){
                     authenticationMessage = "Cancelled";
@@ -94,37 +97,53 @@ public class MechanicBookingApp {
                     System.out.println(authenticationMessage);
                 }
                 else{
+                    //if email is valid, pass it to user class
                     user.setEmail(email);
-                    //third check: set operationCancelled boolean to true if password is not entered
+
+                    //initialize password input
                     JPasswordField passwordField = new JPasswordField();
                     int passwordEntry = JOptionPane.showConfirmDialog(null, passwordField, "Enter your password",JOptionPane.OK_CANCEL_OPTION);
                     
                     password = new String(passwordField.getPassword());
                     Matcher passwordMatcher = passwordPattern.matcher(password);
 
+                    //set operationCancelled to true if window is closed/cancel button pressed
                     if((passwordEntry==JOptionPane.CANCEL_OPTION)||(passwordEntry==JOptionPane.CANCEL_OPTION)){
                         operationCancelled = true;
                     }
+
+                    //return error if password format does not match constraints.
+                    //TODO: add support for non-Latin alphabet characters
+                    //TODO: amend error message to display which symbols are permitted
                     else if(!passwordMatcher.matches()){
                         authenticationMessage = "Password must be 8-64 characters and contain at least one uppercase, one lowercase, one number and one special character";
                         System.out.println(authenticationMessage);
                     }
+
+                    //if Register button was clicked previously, ask user to re-enter password
                     else{
                         if(signUpLoginSelect==0){
                             JPasswordField confirmPasswordField = new JPasswordField();
                             int confirmPasswordEntry = JOptionPane.showConfirmDialog(null, confirmPasswordField, "Please re-enter password",JOptionPane.OK_CANCEL_OPTION);
                             
+                            //set operationCancelled to true if window is closed or cancel button is pressed
                             if(confirmPasswordEntry<0||confirmPasswordEntry==JOptionPane.CANCEL_OPTION){
                                 operationCancelled = true;
                             }
+
                             else{
+                                //compare password char[] and confirmPassword char[]
                                 boolean confirmPasswordCheck = Arrays.equals(passwordField.getPassword(), confirmPasswordField.getPassword());
+                                
+                                //call createAccount() if inputs match
                                 if(confirmPasswordCheck){
                                     user.setPassword(password);
                                     registrationMessage = user.createAccount(userType);
                                     System.out.println(registrationMessage);
                                     registrationSuccessful=user.getRegistrationSuccessCheck();
                                 }
+
+                                //return error if inputs do not match
                                 else{
                                     registrationMessage="Passwords do not match";
                                     System.out.println(registrationMessage);
@@ -132,25 +151,86 @@ public class MechanicBookingApp {
                                 }
                             }
                         }
+
+                        //if user selected login previously, call login method and check if login was successful
                         else if(signUpLoginSelect==1){
                             user.setPassword(password);
                             authenticationMessage = user.login(userType);
                             System.out.println(authenticationMessage);
                             loginSuccessful=user.getLoginSuccessCheck();
+
+                            //if login was unsuccessful, show unsuccessful login options screen
+                            if(loginSuccessful==false){
+                                String [] loginOptions = {"Register","Try again","Reset password"};
+                                int unsuccessfulLoginChoice = JOptionPane.showOptionDialog(frame, authenticationMessage+"\r\nWhat would you like to do?", "Cannot login", 0, 2, null, loginOptions, loginOptions[0]);
+                                
+                                //set operationCancelled to true if window is closed
+                                if(unsuccessfulLoginChoice==JOptionPane.CLOSED_OPTION){
+                                    operationCancelled=true;
+                                }
+                                else if(unsuccessfulLoginChoice==0 || unsuccessfulLoginChoice ==1){
+                                    operationCancelled=false;
+                                }
+
+                                //if reset password is selected, update password in User. display password field
+                                else if(unsuccessfulLoginChoice==2){
+                                    JPasswordField resetPasswordField = new JPasswordField();
+                                    int resetPasswordEntry = JOptionPane.showConfirmDialog(null, resetPasswordField, "Enter your password",JOptionPane.OK_CANCEL_OPTION);
+                    
+                                    String resetPassword = new String(resetPasswordField.getPassword());
+
+                                    //set operationCancelled to true if window is closed or cancel button pressed
+                                    if((resetPasswordEntry==JOptionPane.CANCEL_OPTION)||(resetPasswordEntry==JOptionPane.CANCEL_OPTION)){
+                                        operationCancelled = true;
+                                    }
+
+                                    //return error message if password input does not match regex constraints
+                                    //TODO: add support for non-Latin alphabet characters
+                                    //TODO: amend error message to display which symbols are permitted
+                                    else if(!passwordMatcher.matches()){
+                                        resetPasswordMessage = "Password must be 8-64 characters and contain at least one uppercase, one lowercase, one number and one special character";
+                                        System.out.println(resetPasswordMessage);
+                                    }
+
+                                    //call resetPassword() if password passes validation check
+                                    else{
+                                        user.setPassword(resetPassword);
+                                        resetPasswordMessage = user.resetPassword();
+                                        System.out.println(resetPasswordMessage);
+                                        
+                                        resetPasswordSuccessful = user.getResetPasswordSuccessCheck();
+
+                                        //redundant for now, setting this up for future customization
+                                        if(resetPasswordSuccessful){
+                                            operationCancelled=false;
+                                        }
+                                        else{
+                                            operationCancelled=false;
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
         }while(operationCancelled==false && loginSuccessful==false);
+        
+        //if operationCancelled becomes true in the method above, display Cancelled message and exit application
         if(operationCancelled){
             System.out.print("Cancelled");
             System.exit(0);
         }
 
-        //menuSelect to follow later
+        //check if user is logged in
         loginSuccessful=user.getLoginSuccessCheck();
         if(loginSuccessful){
+
+            //if user is logged in, display Welcome screen
             JOptionPane.showMessageDialog(null,"Welcome "+userRole);
+            
+            //full menu options and customization to follow later
+            //initial setup and example (shortened) menu for authorization handling
             switch (userRole) {
                 case "Customer":
                     break;
@@ -160,6 +240,7 @@ public class MechanicBookingApp {
                     break;
                 case "Garage Manager":
                     GarageManager manager = new GarageManager();
+                    String [] menuOptions = manager.getMenuOptions();
                     menuSelect = JOptionPane.showOptionDialog(null, "Please select a menu option", "Menu", 0, 1, null, menuOptions, menuOptions[0]);
                     manager.setMenuSelect(menuSelect);
                     manager.runMenu();

@@ -1,9 +1,5 @@
-import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
-
 import java.util.HashMap;
 import java.io.*;
-import java.util.regex.*;
 
 //class definition
 public class User {
@@ -14,9 +10,11 @@ public class User {
     protected int userType;
     protected String registrationMessage;
     protected String authenticationMessage;
+    protected String resetPasswordMessage;
 
     boolean registrationSuccessful;
     boolean loginSuccessful;
+    boolean resetPasswordSuccessful;
 
     //make name more meaningful, but apart from that keep filepath separate to allow it to be modified in future
     String filePath = "users.ser";
@@ -91,7 +89,7 @@ public class User {
             try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(filePath))) {
                 outputStream.writeObject(users);
             } 
-            //this catch basically only exists because I got an error message saying it had to. Better error handling needed.
+            //Better error handling needed
             catch (IOException e) {
                 e.printStackTrace();
             }
@@ -153,17 +151,61 @@ public class User {
         return authenticationMessage;
     }
 
+    public String resetPassword(){
+        HashMap<String,String> users= getUsersHashMap();
+        username=userType+email;
+
+        //if the email exists within users and password String is not empty, update users HashMap
+        //set successcheck to true and update resetPasswordMessage accordingly
+        if(users.containsKey(username) && !password.equals("")){
+            users.put(username, password);
+            
+            resetPasswordMessage="Password reset successfully. Please log in";
+            resetPasswordSuccessful=true;
+            setResetPasswordSuccessCheck(resetPasswordSuccessful);
+
+            //serialize updated HashMap
+            try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(filePath))) {
+                outputStream.writeObject(users);
+            } 
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else{
+            //if account isn't found, print error message
+            //TODO: go back and add handler for empty String (which shouldn't happen but what if)
+            resetPasswordMessage="No account found. Please register";
+            resetPasswordSuccessful=false;
+            setResetPasswordSuccessCheck(resetPasswordSuccessful);
+        }
+
+        return resetPasswordMessage;
+    }
+
+    //update registrationSuccessful
     public void setRegistrationSuccessCheck(boolean registrationSuccessful){
         this.registrationSuccessful = registrationSuccessful;
     }
+    //return registrationSuccessful
     public boolean getRegistrationSuccessCheck(){
         return registrationSuccessful;
     }
 
+    //update loginSuccessful
     public void setLoginSuccessCheck(boolean loginSuccessful){
         this.loginSuccessful = loginSuccessful;
     }
+    //return loginSuccessful
     public boolean getLoginSuccessCheck(){
         return loginSuccessful;
+    }
+    //update resetPasswordSuccessful
+    public void setResetPasswordSuccessCheck(boolean resetPasswordSuccessful){
+        this.resetPasswordSuccessful=resetPasswordSuccessful;
+    }
+    //return resetPasswordSuccessful
+    public boolean getResetPasswordSuccessCheck(){
+        return resetPasswordSuccessful;
     }
 }
