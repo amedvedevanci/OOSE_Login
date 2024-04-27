@@ -72,7 +72,7 @@ public class MechanicBookingApp {
             }
             
             String [] signUpLoginOptions = {"Register","Login"};
-            signUpLoginSelect = JOptionPane.showOptionDialog(frame,"Please select","Register or Login",0,2,null,signUpLoginOptions,signUpLoginOptions[0]);
+            signUpLoginSelect = JOptionPane.showOptionDialog(frame,"Please select",userRole,0,2,null,signUpLoginOptions,signUpLoginOptions[0]);
             //first check: set operationCancelled boolean to true if window is closed
             if(signUpLoginSelect==JOptionPane.CLOSED_OPTION){
                 operationCancelled = true;
