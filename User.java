@@ -5,11 +5,6 @@ import java.util.HashMap;
 import java.io.*;
 import java.util.regex.*;
 
-//after removing testing printing blocks, no need to import these:
-import java.util.Map;
-import java.util.Set;
-import java.util.Iterator;
-
 //class definition
 public class User {
     //vars
@@ -47,6 +42,16 @@ public class User {
             }
         }
 
+    //email set method
+    public void setEmail(String email){
+        this.email=email;
+    }
+
+    //password set method
+    public void setPassword(String password){
+        this.password=password;
+    }
+    
     //create account method
     /*This method takes in email String, password String, and userType int (0: Customer, 1: Secretary, 2: Mechanic, 3: GarageManager) 
     and creates an account.
@@ -58,30 +63,11 @@ public class User {
 
     The method then returns String registrationMessage
     */
-    public void setEmail(String email){
-        this.email=email;
-    }
-
-    public void setPassword(String password){
-        this.password=password;
-    }
-    
     public String createAccount(int userType){    
        HashMap<String,String> users= getUsersHashMap();
 
        username = userType+email;
 
-       //print HashMap for testing purposes Only. Remove this block of Code
-       System.out.println("Deserialized HashMap..");
-            // Display content using Iterator
-            Set set = users.entrySet();
-            Iterator iterator = set.iterator();
-            while(iterator.hasNext()) {
-                Map.Entry mentry = (Map.Entry)iterator.next();
-                System.out.print("key: "+ mentry.getKey() + " & Value: ");
-                System.out.println(mentry.getValue());
-            }
-        
         //check if email already exists in the system
         if(users.containsKey(username)){
             registrationMessage = "Account already exists";
@@ -97,7 +83,6 @@ public class User {
         }
 
         //otherwise register user and update the serialised Hashmap
-        //TODO: remove the hashmap updated message
         else{
             users.put(username,password);
             registrationMessage = "Registration successful";
@@ -105,17 +90,6 @@ public class User {
             setRegistrationSuccessCheck(registrationSuccessful);
             try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(filePath))) {
                 outputStream.writeObject(users);
-                System.out.println("HashMap updated and saved successfully!");
-
-                // prints the HashMap again for testing purposes only, delete this
-                Set set2 = users.entrySet();
-                Iterator iterator2 = set2.iterator();
-                while(iterator2.hasNext()) {
-                    Map.Entry mentry2 = (Map.Entry)iterator2.next();
-                    System.out.print("key: "+ mentry2.getKey() + " & Value: ");
-                    System.out.println(mentry2.getValue());
-                }
-
             } 
             //this catch basically only exists because I got an error message saying it had to. Better error handling needed.
             catch (IOException e) {
@@ -139,17 +113,6 @@ public class User {
     */
     public String login(int userType){
         HashMap<String,String> users= getUsersHashMap();
-        
-        //print HashMap for testing purposes Only. Remove this block of code
-        System.out.println("Deserialized HashMap..");
-            // Display content using Iterator
-            Set set = users.entrySet();
-            Iterator iterator = set.iterator();
-            while(iterator.hasNext()) {
-                Map.Entry mentry = (Map.Entry)iterator.next();
-                System.out.print("key: "+ mentry.getKey() + " & Value: ");
-                System.out.println(mentry.getValue());
-            }
 
         username = userType + email;
         //if length is 0 ie String is empty, update authenticationMessage
