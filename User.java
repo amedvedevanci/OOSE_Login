@@ -13,12 +13,12 @@ import java.util.Iterator;
 //class definition
 public class User {
     //vars
-    private String username;
-    private String email;
-    private String password;
+    protected String username;
+    protected String email;
+    protected String password;
     protected int userType;
-    private String registrationMessage;
-    private String authenticationMessage;
+    protected String registrationMessage;
+    protected String authenticationMessage;
 
     boolean registrationSuccessful;
     boolean loginSuccessful;

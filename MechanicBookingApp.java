@@ -53,19 +53,19 @@ public class MechanicBookingApp {
                 case "Customer":
                     Customer customer = new Customer();
                     userType = customer.getUserType();
-                    //break;
+                    break;
                 case "Secretary":
                     Secretary secretary = new Secretary();
                     userType = secretary.getUserType();
-                    //break;
+                    break;
                 case "Mechanic":
                     Mechanic mechanic = new Mechanic();
                     userType = mechanic.getUserType();
-                    //break;
+                    break;
                 case "Garage Manager":
                     GarageManager manager = new GarageManager();
-                    //userType = manager.getUserType();
-                    //break;
+                    userType = manager.getUserType();
+                    break;
             
                 default: System.out.println("Cancelled");
                     //break;
@@ -141,7 +141,7 @@ public class MechanicBookingApp {
                     }
                 }
             }
-        }while(operationCancelled==false);
+        }while(operationCancelled==false && loginSuccessful==false);
         if(operationCancelled){
             System.out.print("Cancelled");
             System.exit(0);
@@ -150,42 +150,23 @@ public class MechanicBookingApp {
         //menuSelect to follow later
         loginSuccessful=user.getLoginSuccessCheck();
         if(loginSuccessful){
-            do{
-                menuSelect = JOptionPane.showOptionDialog(null, "Please select a menu option", "Menu", 0, 1, null, menuOptions, menuOptions[0]);
-                if((menuSelect==0)||(menuSelect==JOptionPane.CLOSED_OPTION)){
-                    System.out.println("Cancelled");
-                }
-                else if(menuSelect == 1){
-                    String [] userTypes = {"Customer","Secretary","Mechanic","Garage Manager"};
-                    userType = JOptionPane.showOptionDialog(null, "Please select the type of account you wish to register", "Select account type", 0, 3, null, userTypes, userTypes[0]);
-                    if(userType==JOptionPane.CLOSED_OPTION){
-                        registrationMessage="Cancelled";
-                        System.out.println(registrationMessage);
-                    }
-                    else{
-                        email = JOptionPane.showInputDialog("Enter email address");
-                        if(email==null){
-                            registrationMessage="Cancelled";
-                            System.out.println(registrationMessage);
-                        }
-                        else{
-                            user.setEmail(email);
-                            JPasswordField passwordField = new JPasswordField();
-                            int passwordEntry = JOptionPane.showConfirmDialog(null, passwordField, "Enter your password",JOptionPane.OK_CANCEL_OPTION);
-                            if(passwordEntry==JOptionPane.CLOSED_OPTION||passwordEntry==JOptionPane.CANCEL_OPTION){
-                                registrationMessage = "Cancelled";
-                                System.out.println(registrationMessage);
-                            }
-                            else{
-                                password = new String(passwordField.getPassword());
-                                user.setPassword(password);
-                                registrationMessage = user.createAccount(userType);
-                                System.out.println(registrationMessage);
-                            }
-                        }
-                    }
-                }
-            }while(menuSelect>0);
+            JOptionPane.showMessageDialog(null,"Welcome "+userRole);
+            switch (userRole) {
+                case "Customer":
+                    break;
+                case "Secretary":
+                    break;
+                case "Mechanic":
+                    break;
+                case "Garage Manager":
+                    GarageManager manager = new GarageManager();
+                    menuSelect = JOptionPane.showOptionDialog(null, "Please select a menu option", "Menu", 0, 1, null, menuOptions, menuOptions[0]);
+                    manager.setMenuSelect(menuSelect);
+                    manager.runMenu();
+                    break;
+                default: JOptionPane.showMessageDialog(null, "Unable to determine role");
+                    break;
+            }
         }
     }
 }
