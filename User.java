@@ -3,6 +3,7 @@ import javax.swing.JPasswordField;
 
 import java.util.HashMap;
 import java.io.*;
+import java.util.regex.*;
 
 //after removing testing printing blocks, no need to import these:
 import java.util.Map;
@@ -15,7 +16,7 @@ public class User {
     private String username;
     private String email;
     private String password;
-    private int userType;
+    protected int userType;
     private String registrationMessage;
     private String authenticationMessage;
 
