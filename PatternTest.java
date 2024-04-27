@@ -26,7 +26,16 @@ public class PatternTest {
     };
 
     static Pattern passwordPattern = Pattern.compile("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!-/:-@+_])[a-zA-Z0-9!-/:-@+_]{8,64}$");
-    static String password="";
+    static String[] passwords = {
+        "P@ssw0rd",
+        "aaaa",
+        "A1@a",
+        "THISISAP@SSWORD!",
+        "p@ssw0rd",
+        "P@ssword",
+        "Passw0rd",
+        ""
+    };
 
     public static void main(String[] args) {
         for(int i=0;i<emails.length;i++){
@@ -34,7 +43,11 @@ public class PatternTest {
             System.out.print(emails[i]+" ");
             System.out.println(emailMatcher.matches());
         }
-    }
-    
 
+        for(int i=0;i<passwords.length;i++){
+            Matcher passwordMatcher = passwordPattern.matcher(passwords[i]);
+            System.out.print(passwords[i]+" ");
+            System.out.println(passwordMatcher.matches());
+        }
+    }
 }
